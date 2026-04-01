@@ -17,13 +17,13 @@ public class SponsorService : ISponsorService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<Sponsor>> GetAllAsync() 
+    public async Task<IEnumerable<Sponsor>> GetAllAsync()
     {
         _logger.LogInformation("Retrieving all Sponsors");
         return await _sponsorRepository.GetAllAsync();
     }
 
-    public async Task<Sponsor?> GetByIdAsync(int id) 
+    public async Task<Sponsor?> GetByIdAsync(int id)
     {
         _logger.LogInformation("Retrieving Sponsor with ID: {SponsorId}", id);
         var sponsor = await _sponsorRepository.GetByIdAsync(id);
@@ -34,12 +34,12 @@ public class SponsorService : ISponsorService
         return sponsor;
     }
 
-    public async Task<Sponsor> CreateAsync(Sponsor sponsor) 
+    public async Task<Sponsor> CreateAsync(Sponsor sponsor)
     {
         // Validaciones
 
         // Evitar duplicados
-        var existingSponsor = await _sponsorRepository.GetByNameAsync(sponsor.Name);
+        var existingSponsor = await _sponsorRepository.ExistByNameAsync(sponsor.Name);
         if (existingSponsor != null)
         {
             _logger.LogWarning("Sponsor with name '{SponsorName}' already exists", sponsor.Name);
@@ -73,7 +73,7 @@ public class SponsorService : ISponsorService
 
         if (existingSponsor.Name != sponsor.Name)
         {
-            var sponsorWithSameName = await _sponsorRepository.GetByNameAsync(sponsor.Name);
+            var sponsorWithSameName = await _sponsorRepository.ExistByNameAsync(sponsor.Name);
             if (sponsorWithSameName != null)
             {
                 throw new InvalidOperationException(

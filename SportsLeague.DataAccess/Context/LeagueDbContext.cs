@@ -143,13 +143,14 @@ public class LeagueDbContext : DbContext
         });
 
         // -- Sponsor Configuration --
+
         modelBuilder.Entity<Sponsor>(entity =>
         {
             entity.HasKey(s => s.Id);
             entity.Property(s => s.Name)
                 .IsRequired()
                 .HasMaxLength(100);
-            entity.Property(s => s.ContacEmail)
+            entity.Property(s => s.ContactEmail)
                 .IsRequired()
                 .HasMaxLength(100);
             entity.Property(s => s.Phone)
@@ -163,7 +164,7 @@ public class LeagueDbContext : DbContext
             entity.Property(s => s.UpdatedAt)
                 .IsRequired(false);
             entity.HasIndex(s => s.Name)
-                .IsUnique();
+                .IsUnique(); // Evitar nombres de patrocinadores duplicados
 
         });
     }

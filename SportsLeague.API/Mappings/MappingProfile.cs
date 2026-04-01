@@ -58,6 +58,12 @@ public class MappingProfile : Profile
 
         src.TournamentTeams != null ? src.TournamentTeams.Count : 0));
 
+        // Sponsor mappings
+
+        CreateMap<SponsorRequestDTO, Sponsor>();
+
+        CreateMap<Sponsor, SponsorResponseDTO>();
+
 
     }
 
