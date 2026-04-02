@@ -23,13 +23,15 @@ public class LeagueDbContext : DbContext
 
     public DbSet<Player> Players => Set<Player>();
 
-    public DbSet<Referee> Referees => Set<Referee>(); 
+    public DbSet<Referee> Referees => Set<Referee>();
 
-    public DbSet<Tournament> Tournaments => Set<Tournament>(); 
+    public DbSet<Tournament> Tournaments => Set<Tournament>();
 
-    public DbSet<TournamentTeam> TournamentTeams => Set<TournamentTeam>(); 
+    public DbSet<TournamentTeam> TournamentTeams => Set<TournamentTeam>();
 
     public DbSet<Sponsor> Sponsors => Set<Sponsor>();
+
+    public DbSet<TournamentSponsor> TournamentSponsors => Set<TournamentSponsor>();
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -142,6 +144,37 @@ public class LeagueDbContext : DbContext
 
         });
 
+        // ── TournamentTeam Configuration ──
+        modelBuilder.Entity<TournamentTeam>(entity =>
+        {
+            entity.HasKey(tt => tt.Id);
+            entity.Property(tt => tt.RegisteredAt)
+                  .IsRequired();
+            entity.Property(tt => tt.CreatedAt)
+                  .IsRequired();
+            entity.Property(tt => tt.UpdatedAt)
+                  .IsRequired(false);
+
+            // Relación con Tournament
+            entity.HasOne(tt => tt.Tournament) 
+                  .WithMany(t => t.TournamentTeams) 
+                  .HasForeignKey(tt => tt.TournamentId) 
+                  .OnDelete(DeleteBehavior.Cascade); 
+
+            // Relación con Team
+            entity.HasOne(tt => tt.Team) 
+                  .WithMany(t => t.TournamentTeams) 
+                  .HasForeignKey(tt => tt.TeamId) // La clave foránea 
+                  .OnDelete(DeleteBehavior.Cascade); 
+
+            // Índice único compuesto: un equipo solo una vez por torneo
+            entity.HasIndex(tt => new { tt.TournamentId, tt.TeamId })
+                  .IsUnique();
+        });
+
+
+
+
         // -- Sponsor Configuration --
 
         modelBuilder.Entity<Sponsor>(entity =>
@@ -167,5 +200,40 @@ public class LeagueDbContext : DbContext
                 .IsUnique(); // Evitar nombres de patrocinadores duplicados
 
         });
+
+
+        // -- TournamentSponsor Configuration --
+
+        modelBuilder.Entity<TournamentSponsor>(entity =>
+        {
+            entity.HasIndex(ts => new { ts.TournamentId, ts.SponsorId }) // Clave primaria compuesta
+                  .IsUnique(); // Un patrocinador solo puede patrocinar un torneo una vez
+            entity.HasKey(ts => ts.Id); // Clave primaria simple para facilitar las relaciones
+            entity.Property(ts => ts.ContractAmount)
+                .IsRequired()
+                .HasColumnType("decimal(18,2)");
+            entity.Property(ts => ts.JoinedAt)
+                .IsRequired();
+            entity.Property(ts => ts.CreatedAt)
+                .IsRequired();
+            entity.Property(ts => ts.UpdatedAt)
+                .IsRequired(false);
+
+            // Relación con Tournament
+            entity.HasOne(ts => ts.Tournament)
+                .WithMany(t => t.TournamentSponsors)
+                .HasForeignKey(ts => ts.TournamentId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Relación con Sponsor
+            entity.HasOne(ts => ts.Sponsor)
+                .WithMany(s => s.TournamentSponsors)
+                .HasForeignKey(ts => ts.SponsorId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
     }
 }
+
+
+

@@ -2,11 +2,11 @@
 
 public class TournamentSponsor : AuditBase
 {
-    public int Id { get; set; }
 
-    public int TournamentId { get; set; }
+    public int TournamentId { get; set; } // Foreign Key
 
-    public int SponsorId { get; set; }
+    public int SponsorId { get; set; } // Foreign Key
+
     public decimal ContractAmount { get; set; }
 
     public DateTime JoinedAt { get; set; } = DateTime.UtcNow;
