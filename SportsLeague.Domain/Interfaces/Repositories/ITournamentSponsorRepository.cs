@@ -2,7 +2,7 @@
 
 namespace SportsLeague.Domain.Interfaces.Repositories;
 
-public interface ITournamentSponsorRepository
+public interface ITournamentSponsorRepository : IGenericRepository<TournamentSponsor>
 {
     Task<TournamentSponsor?> GetByTournamentAndSponsorAsync(int tournamentId, int sponsorId);
 

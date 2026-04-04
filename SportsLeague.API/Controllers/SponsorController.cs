@@ -97,4 +97,46 @@ public class SponsorController : ControllerBase
             return NotFound(new { message = ex.Message });
         }
     }
+
+    [HttpPost("{id}/tournaments")] // Registrar un torneo para un patrocinador específico
+    public async Task<ActionResult> RegisterTournament(int id, TournamentSponsorRequestDTO dto)
+    {
+        try
+        {
+            await _sponsorService.RegisterForTournamentAsync(id, dto.TournamentId, dto.ContractAmount);
+            return Ok(new { message = "Tournament successfully registered" });
+        }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+        catch (InvalidOperationException ex) { return Conflict(new { message = ex.Message }); }
+    }
+
+    [HttpGet("{id}/tournaments")] // Obtener los torneos asociados a un patrocinador específico
+    public async Task<ActionResult<IEnumerable<TournamentResponseDTO>>> GetTournaments(int id)
+    {
+        try
+        {
+            var tournaments = await _sponsorService.GetTournamentsBySponsorAsync(id);
+            return Ok(_mapper.Map<IEnumerable<TournamentResponseDTO>>(tournaments));
+        }
+        catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
+    }
+
+    [HttpDelete("{id}/tournaments/{tournamentId}")] // Desvincular un torneo de un patrocinador específico
+    public async Task<ActionResult> UnregisterTournament(int id, int tournamentId)
+    {
+        try
+        {
+            await _sponsorService.LeaveTournamentAsync(id, tournamentId);
+
+            return Ok(new { message = "Sponsor successfully withdrawn from the tournament" });
+        }
+        catch (KeyNotFoundException ex)
+        {
+            return NotFound(new { message = ex.Message });
+        }
+        catch (Exception)
+        {
+            return StatusCode(500, new { message = "Internal server error" });
+        }
+    }
 }
