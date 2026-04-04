@@ -98,7 +98,8 @@ public class SponsorController : ControllerBase
         }
     }
 
-    [HttpPost("{id}/tournaments")] // Registrar un torneo para un patrocinador específico
+    // Asociar un torneo a un patrocinador
+    [HttpPost("{id}/tournaments")] 
     public async Task<ActionResult> RegisterTournament(int id, TournamentSponsorRequestDTO dto)
     {
         try
@@ -110,7 +111,8 @@ public class SponsorController : ControllerBase
         catch (InvalidOperationException ex) { return Conflict(new { message = ex.Message }); }
     }
 
-    [HttpGet("{id}/tournaments")] // Obtener los torneos asociados a un patrocinador específico
+    // Torneos asociados a un patrocinador
+    [HttpGet("{id}/tournaments")]
     public async Task<ActionResult<IEnumerable<TournamentResponseDTO>>> GetTournaments(int id)
     {
         try
@@ -121,7 +123,8 @@ public class SponsorController : ControllerBase
         catch (KeyNotFoundException ex) { return NotFound(new { message = ex.Message }); }
     }
 
-    [HttpDelete("{id}/tournaments/{tournamentId}")] // Desvincular un torneo de un patrocinador específico
+    // Eliminar un torneo de un patrocinador
+    [HttpDelete("{id}/tournaments/{tournamentId}")] 
     public async Task<ActionResult> UnregisterTournament(int id, int tournamentId)
     {
         try

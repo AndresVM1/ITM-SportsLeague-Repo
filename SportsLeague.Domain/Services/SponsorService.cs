@@ -123,26 +123,25 @@ public class SponsorService : ISponsorService
 
     public async Task RegisterForTournamentAsync(int sponsorId, int tournamentId, decimal contractAmount)
     {
-        // 1. Validar que el Sponsor exista
+        // Sponsor que sí exista
         var sponsor = await _sponsorRepository.GetByIdAsync(sponsorId);
         if (sponsor is null)
             throw new KeyNotFoundException($"Sponsor with ID {sponsorId} was not found.");
 
-        // 2. Validar que el Tournament exista
+        // Torneo que sí exista
         var tournamentExists = await _tournamentRepository.ExistsAsync(tournamentId);
         if (!tournamentExists)
             throw new KeyNotFoundException($"Tournament with ID {tournamentId} was not found.");
 
-        // 3. Evitar duplicados
+        // Evitar duplicados
         var existing = await _tournamentSponsorRepository.GetByTournamentAndSponsorAsync(tournamentId, sponsorId);
         if (existing is not null)
             throw new InvalidOperationException($"Sponsor {sponsorId} is already registered in tournament {tournamentId}.");
 
-        // 4. Validar monto del contrato
         if (contractAmount <= 0)
             throw new ArgumentException("Contract amount must be greater than zero.", nameof(contractAmount));
 
-        // Crear la relación
+        // Relación
         var tournamentSponsor = new TournamentSponsor
         {
             TournamentId = tournamentId,
@@ -159,12 +158,12 @@ public class SponsorService : ISponsorService
     }
     public async Task<IEnumerable<Tournament>> GetTournamentsBySponsorAsync(int sponsorId)
     {
-        // Validar que el sponsor exista
+        // Sponsor que sí exista
         var sponsor = await _sponsorRepository.GetByIdAsync(sponsorId);
         if (sponsor is null)
             throw new KeyNotFoundException($"Sponsor with ID {sponsorId} was not found.");
 
-        // Obtener las relaciones y proyectar solo los torneos
+        // Obtener y proyectar
         var tournamentSponsors = await _tournamentSponsorRepository
             .GetByTournamentAsync(sponsorId); 
 
