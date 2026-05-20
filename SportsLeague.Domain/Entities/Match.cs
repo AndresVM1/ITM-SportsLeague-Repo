@@ -37,6 +37,8 @@ public class Match : AuditBase
 
     public Referee Referee { get; set; } = null!;
 
+    public ICollection<MatchLineup> MatchLineups { get; set; } = new List<MatchLineup>();
+
     // Relación 1:1 con resultado 
 
     public MatchResult? MatchResult { get; set; }

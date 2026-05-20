@@ -40,6 +40,8 @@ public class LeagueDbContext : DbContext
 
     public DbSet<Card> Cards => Set<Card>();
 
+    public DbSet<MatchLineup> MatchLineups => Set<MatchLineup>();
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
 
@@ -428,6 +430,37 @@ public class LeagueDbContext : DbContext
                   .HasForeignKey(c => c.PlayerId)
 
                   .OnDelete(DeleteBehavior.Restrict);
+
+        });
+
+        // ── MatchLineup Configuration ──
+        modelBuilder.Entity<MatchLineup>(entity =>
+        {
+            entity.HasKey(ml => ml.Id);
+            entity.Property(ml => ml.IsStarting)
+                  .IsRequired();
+            entity.Property(ml => ml.Position)
+                  .IsRequired();
+            entity.Property(ml => ml.CreatedAt)
+                  .IsRequired();
+            entity.Property(ml => ml.UpdatedAt)
+                  .IsRequired(false);
+
+            // Match Relationship
+            entity.HasOne(ml => ml.Match) 
+                  .WithMany(m => m.MatchLineups) 
+                  .HasForeignKey(ml => ml.MatchId) // FK en MatchLineup que apunta al partido
+                  .OnDelete(DeleteBehavior.Cascade);
+
+            // Player Relationship
+            entity.HasOne(ml => ml.Player)
+                  .WithMany(p => p.MatchLineups) // 
+                  .HasForeignKey(ml => ml.PlayerId) // FK en MatchLineup que apunta al jugador
+                  .OnDelete(DeleteBehavior.Restrict);
+
+            // No se permite que un mismo jugador esté registrado más de una vez en el mismo partido (ya sea como titular o suplente)
+            entity.HasIndex(ml => new { ml.MatchId, ml.PlayerId })
+                  .IsUnique();
 
         });
     }
