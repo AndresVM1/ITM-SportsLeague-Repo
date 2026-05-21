@@ -6,6 +6,10 @@ using SportsLeague.API.DTOs.Response;
 
 using SportsLeague.Domain.Entities;
 
+using SportsLeague.Domain.Enums;
+
+using System;
+
 
 namespace SportsLeague.API.Mappings;
 
@@ -118,6 +122,14 @@ public class MappingProfile : Profile
                 opt => opt.MapFrom(src =>
 
                     src.Player.FirstName + " " + src.Player.LastName));
+
+        // MatchLineup mappings
+        CreateMap<MatchLineupRequestDTO, MatchLineup>();
+        CreateMap<MatchLineup, MatchLineupResponseDTO>()
+            .ForMember(dest => dest.PlayerName,
+                opt => opt.MapFrom(src => src.Player.FirstName + " " + src.Player.LastName))
+            .ForMember(dest => dest.TeamName,
+                opt => opt.MapFrom(src => src.Player.Team.Name)); // Obtenemos el nombre del equipo a través de la relación Player -> Team
 
     }
 

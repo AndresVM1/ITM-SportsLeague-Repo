@@ -7,7 +7,7 @@ namespace SportsLeague.API.DTOs.Request
 
 
 {
-    public class MatchLienupRequestDTO
+    public class MatchLineupRequestDTO
     {
         public PlayerPosition Position { get; set; }
         public int PlayerId { get; set; }

@@ -37,8 +37,6 @@ public class Match : AuditBase
 
     public Referee Referee { get; set; } = null!;
 
-    public ICollection<MatchLineup> MatchLineups { get; set; } = new List<MatchLineup>();
-
     // Relación 1:1 con resultado 
 
     public MatchResult? MatchResult { get; set; }
@@ -49,5 +47,7 @@ public class Match : AuditBase
     public ICollection<Goal> Goals { get; set; } = new List<Goal>();
 
     public ICollection<Card> Cards { get; set; } = new List<Card>();
+
+    public ICollection<MatchLineup> MatchLineups { get; set; } = new List<MatchLineup>();
 
 }
