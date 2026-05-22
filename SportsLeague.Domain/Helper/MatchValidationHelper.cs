@@ -6,122 +6,125 @@ using SportsLeague.Domain.Interfaces.Repositories;
 
 
 
-namespace SportsLeague.Domain.Helpers;
-
-
-
-public class MatchValidationHelper
-
+namespace SportsLeague.Domain.Helpers
 {
 
-    private readonly IMatchRepository _matchRepository;
-
-    private readonly IPlayerRepository _playerRepository;
 
 
-
-    public MatchValidationHelper(
-
-        IMatchRepository matchRepository,
-
-        IPlayerRepository playerRepository)
+    public class MatchValidationHelper
 
     {
 
-        _matchRepository = matchRepository;
+        private readonly IMatchRepository _matchRepository;
 
-        _playerRepository = playerRepository;
-
-    }
+        private readonly IPlayerRepository _playerRepository;
 
 
 
-    public async Task<Match> ValidateMatchForEventAsync(int matchId)
+        public MatchValidationHelper(
 
-    {
+            IMatchRepository matchRepository,
 
-        var match = await _matchRepository.GetByIdAsync(matchId);
+            IPlayerRepository playerRepository)
 
-        if (match == null)
+        {
 
-            throw new KeyNotFoundException(
+            _matchRepository = matchRepository;
 
-                $"No se encontró el partido con ID {matchId}");
+            _playerRepository = playerRepository;
 
-
-
-        if (match.Status != MatchStatus.InProgress &&
-
-            match.Status != MatchStatus.Finished)
-
-            throw new InvalidOperationException(
-
-                "Solo se pueden registrar eventos en partidos InProgress o Finished");
+        }
 
 
 
-        return match;
+        public async Task<Match> ValidateMatchForEventAsync(int matchId)
 
-    }
+        {
 
+            var match = await _matchRepository.GetByIdAsync(matchId);
 
+            if (match == null)
 
-    public async Task<Player> ValidatePlayerInMatchAsync(
+                throw new KeyNotFoundException(
 
-        int playerId, Match match)
-
-    {
-
-        var player = await _playerRepository.GetByIdAsync(playerId);
-
-        if (player == null)
-
-            throw new KeyNotFoundException(
-
-                $"No se encontró el jugador con ID {playerId}");
+                    $"No se encontró el partido con ID {matchId}");
 
 
 
-        if (player.TeamId != match.HomeTeamId &&
+            if (match.Status != MatchStatus.InProgress &&
 
-            player.TeamId != match.AwayTeamId)
+                match.Status != MatchStatus.Finished)
 
-            throw new InvalidOperationException(
+                throw new InvalidOperationException(
 
-                "El jugador no pertenece a ninguno de los equipos del partido");
-
-
-
-        return player;
-
-    }
+                    "Solo se pueden registrar eventos en partidos InProgress o Finished");
 
 
 
-    public static void ValidateMinute(int minute)
+            return match;
 
-    {
+        }
 
-        if (minute < 1 || minute > 120)
 
-            throw new InvalidOperationException(
 
-                "El minuto debe estar entre 1 y 120");
+        public async Task<Player> ValidatePlayerInMatchAsync(
 
-    }
-    public async Task<Match> ValidateLineupMatchAsync(int matchId)
-    {
-        var match = await _matchRepository.GetByIdAsync(matchId);
+            int playerId, Match match)
 
-        // Validar si el partido existe
-        if (match == null)
-            throw new KeyNotFoundException($"No se encontró el partido con ID {matchId}");
+        {
 
-        //Validar que el partido esté en estado Scheduled
-        if (match.Status != MatchStatus.Scheduled)
-            throw new InvalidOperationException("Solo se pueden registrar alineaciones en partidos Scheduled");
+            var player = await _playerRepository.GetByIdAsync(playerId);
 
-        return match;
+            if (player == null)
+
+                throw new KeyNotFoundException(
+
+                    $"No se encontró el jugador con ID {playerId}");
+
+
+
+            if (player.TeamId != match.HomeTeamId &&
+
+                player.TeamId != match.AwayTeamId)
+
+                throw new InvalidOperationException(
+
+                    "El jugador no pertenece a ninguno de los equipos del partido");
+
+
+
+            return player;
+
+        }
+
+
+
+        public static void ValidateMinute(int minute)
+
+        {
+
+            if (minute < 1 || minute > 120)
+
+                throw new InvalidOperationException(
+
+                    "El minuto debe estar entre 1 y 120");
+
+        }
+        public async Task<Match> ValidateLineupMatchAsync(int matchId)
+        {
+            var match = await _matchRepository.GetByIdAsync(matchId);
+
+            // Validar si el partido existe
+            if (match == null)
+                throw new KeyNotFoundException($"No se encontró el partido con ID {matchId}");
+
+            //Validar que el partido esté en estado Scheduled
+            if (match.Status != MatchStatus.Scheduled)
+                throw new InvalidOperationException("Solo se pueden registrar alineaciones en partidos Scheduled");
+
+            return match;
+        }
+
     }
 
 }

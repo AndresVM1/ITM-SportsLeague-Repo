@@ -12,13 +12,13 @@ public class LeagueDbContext : DbContext
 
     public LeagueDbContext(DbContextOptions<LeagueDbContext> options)
 
-    : base(options)
+        : base(options)
 
     {
 
     }
 
-
+    // Un DbSet por cada entidad del dominio
     public DbSet<Team> Teams => Set<Team>();
 
     public DbSet<Player> Players => Set<Player>();

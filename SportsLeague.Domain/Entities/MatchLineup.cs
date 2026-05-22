@@ -15,9 +15,9 @@ namespace SportsLeague.Domain.Entities
 
         // Navigation properties
 
-        public Player Player { get; set; } = null!;
-
         public Match Match { get; set; } = null!;
+
+        public Player Player { get; set; } = null!;
 
 
     }

@@ -1,6 +1,5 @@
 ﻿using SportsLeague.Domain.Entities;
-
-namespace SportsLeague.Domain.Interfaces.Repositories;
+using SportsLeague.Domain.Interfaces.Repositories;
 
 // Repositorio específico para MatchLineup, con métodos personalizados para consultas relacionadas con alineaciones de partidos
 public interface IMatchLineupRepository : IGenericRepository<MatchLineup>
