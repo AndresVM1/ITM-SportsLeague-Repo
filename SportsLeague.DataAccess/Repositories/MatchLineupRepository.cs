@@ -21,7 +21,7 @@ public class MatchLineupRepository : GenericRepository<MatchLineup>, IMatchLineu
     }
 
 
-    // Method for determining the lineup of a specific team in a game
+    // Metodo para obtener alineación por partido y equipo, incluyendo detalles del jugador y su equipo
     public async Task<List<MatchLineup>> GetByMatchAndTeamAsync(int matchId, int teamId)
     {
         return await _context.MatchLineups
@@ -31,7 +31,7 @@ public class MatchLineupRepository : GenericRepository<MatchLineup>, IMatchLineu
     }
 
 
-    // Method for checking whether a player is in the lineup for a specific game
+    // Metodo para verificar si un jugador ya está registrado en la alineación de un partido específico, evitando duplicados
     public async Task<bool> ExistsByMatchAndPlayerAsync(int matchId, int playerId)
     {
         return await _context.MatchLineups
@@ -39,7 +39,7 @@ public class MatchLineupRepository : GenericRepository<MatchLineup>, IMatchLineu
     }
 
 
-    // Method for counting the number of starters on a team in a specific game
+    // Metodo para contar el número de titulares registrados para un equipo en un partido específico, asegurando que no se exceda el límite de 11 titulares
     public async Task<int> CountStartersByTeamAsync(int matchId, int teamId)
     {
         return await _context.MatchLineups

@@ -98,8 +98,6 @@ using (var scope = app.Services.CreateScope())
 
     var context = scope.ServiceProvider.GetRequiredService<LeagueDbContext>();
 
-
-
     await context.Database.MigrateAsync(); // Crea la BD + aplica migraciones 
 
     await DataSeeder.SeedAsync(context);

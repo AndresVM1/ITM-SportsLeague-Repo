@@ -2,6 +2,8 @@
 
 namespace SportsLeague.Domain.Interfaces.Services;
 
+
+// Servicio de dominio para gestionar alineaciones de partidos, con lógica de negocio específica para validar y manejar alineaciones
 public interface IMatchLineupService
 {
     Task<MatchLineup> AddPlayerAsync(int matchId, MatchLineup lineup);
