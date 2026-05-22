@@ -27,17 +27,19 @@ namespace SportsLeague.Domain.Services
 
         public async Task<MatchLineup> AddPlayerAsync(int matchId, MatchLineup lineup)
         {
-            // V1 + V6: Validar partido (existe y está Scheduled)
+            // VALIDACIONES:
+            // El partido debe existir y estar en 'Scheduled' para poder modificar la alineación
             var match = await _validationHelper.ValidateLineupMatchAsync(matchId);
 
-            // V2 + V3: Validar jugador (existe y pertenece al partido)
+            // Que el jugador exista y que pertenezca a un equipo del partido
             var player = await _validationHelper.ValidatePlayerInMatchAsync(lineup.PlayerId, match);
 
-            // V4: No duplicado
-            if (await _lineupRepository.ExistsByMatchAndPlayerAsync(matchId, lineup.PlayerId))
+            // Que el jugador no esté ya registrado en este partido
+            var isAlreadyRegistered = await _lineupRepository.ExistsByMatchAndPlayerAsync(matchId, lineup.PlayerId);
+            if (isAlreadyRegistered == true)
                 throw new InvalidOperationException("El jugador ya está registrado en la alineación de este partido");
 
-            // V5: Máximo 11 titulares
+            // Verificamos que hallan menos de 11 titulares registrados para el equipo 
             if (lineup.IsStarting)
             {
                 int startersCount = await _lineupRepository.CountStartersByTeamAsync(matchId, player.TeamId);
@@ -47,16 +49,18 @@ namespace SportsLeague.Domain.Services
 
             lineup.MatchId = matchId;
 
-            _logger.LogInformation("Adding player {PlayerId} to match {MatchId} lineup",
-                lineup.PlayerId, matchId);
-
+            _logger.LogInformation(
+                    "Adding player {PlayerId} to match {MatchId} lineup",
+                    lineup.PlayerId, matchId);
             return await _lineupRepository.CreateAsync(lineup);
         }
 
         public async Task<IEnumerable<MatchLineup>> GetByMatchAsync(int matchId)
         {
             // Validamos que el partido exista
-            await _validationHelper.ValidateLineupMatchAsync(matchId);
+            var match = await _matchRepository.GetByIdAsync(matchId);
+            if (match == null)
+                throw new KeyNotFoundException($"No se encontró el partido con ID {matchId}");
 
             return await _lineupRepository.GetByMatchAsync(matchId);
         }
@@ -68,18 +72,22 @@ namespace SportsLeague.Domain.Services
 
         public async Task DeleteAsync(int matchId, int lineupId)
         {
-            // Validar partido
+            // VALIDACIONES:
+            // El partido debe existir y estar en 'Scheduled' para poder modificar la alineación
             await _validationHelper.ValidateLineupMatchAsync(matchId);
 
+            // El registro de alineación debe existir
             var existingLineup = await _lineupRepository.GetByIdAsync(lineupId);
             if (existingLineup == null)
                 throw new KeyNotFoundException($"No se encontró el registro de alineación con ID {lineupId}");
 
+            // Validar que el registro pertenezca efectivamente al partido de la URL
             if (existingLineup.MatchId != matchId)
                 throw new InvalidOperationException("El registro de alineación no corresponde al partido especificado");
 
-            _logger.LogInformation("Deleting lineup record {LineupId} from match {MatchId}", lineupId, matchId);
-
+            _logger.LogInformation(
+                "Deleting lineup record {LineupId} from match {MatchId}",
+                lineupId, matchId);
             await _lineupRepository.DeleteAsync(lineupId);
         }
     }

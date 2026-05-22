@@ -22,7 +22,7 @@ namespace SportsLeague.API.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet] // Obtener la alineación completa del partido
         public async Task<ActionResult<IEnumerable<MatchLineupResponseDTO>>> GetLineup(int matchId)
         {
             try
@@ -36,14 +36,14 @@ namespace SportsLeague.API.Controllers
             }
         }
 
-        [HttpGet("team/{teamId}")] 
+        [HttpGet("team/{teamId}")] // Obtener alineación de un equipo específico
         public async Task<ActionResult<IEnumerable<MatchLineupResponseDTO>>> GetTeamLineup(int matchId, int teamId)
         {
             var lineup = await _lineupService.GetByMatchAndTeamAsync(matchId, teamId);
             return Ok(_mapper.Map<IEnumerable<MatchLineupResponseDTO>>(lineup));
         }
 
-        [HttpPost] 
+        [HttpPost] // Agregar un jugadro a la alineación
         public async Task<ActionResult<MatchLineupResponseDTO>> AddPlayer(int matchId, MatchLineupRequestDTO dto)
         {
             try
@@ -62,7 +62,7 @@ namespace SportsLeague.API.Controllers
             }
         }
 
-        [HttpDelete("{lineupId}")] 
+        [HttpDelete("{lineupId}")] // Elinimar l jugador de la alineación
         public async Task<ActionResult> RemovePlayer(int matchId, int lineupId)
         {
             try

@@ -9,9 +9,10 @@ namespace SportsLeague.API.DTOs.Request
 {
     public class MatchLineupRequestDTO
     {
-        public PlayerPosition Position { get; set; }
         public int PlayerId { get; set; }
         public bool IsStarting { get; set; }
+
+        public PlayerPosition Position { get; set; }
 
     }
 }
